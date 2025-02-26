@@ -7,7 +7,10 @@ on:
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-latest  # ✅ Using Ubuntu VM (No container)
+    runs-on: ubuntu-22.04
+
+    container:
+      image: node:20  # ✅ Using node:20 container
 
     steps:
       - name: 📥 Checkout Repository
@@ -18,9 +21,22 @@ jobs:
         with:
           node-version: '20'
 
-      - name: 🛠️ Ensure Chrome & WebDriver Are Installed
+      - name: 🌐 Install Google Chrome (No sudo)
         run: |
+          apt-get update
+          apt-get install -y wget curl unzip
+          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          dpkg -i google-chrome-stable_current_amd64.deb || apt-get -fy install
           google-chrome --version
+
+      - name: 🛠️ Install Chrome WebDriver (No sudo)
+        run: |
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
+          echo "Detected Chrome version: $CHROME_VERSION"
+          wget -q "https://storage.googleapis.com/chrome-for-testing-public/$CHROME_VERSION/linux64/chromedriver-linux64.zip"
+          unzip chromedriver-linux64.zip
+          mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+          chmod +x /usr/local/bin/chromedriver
           chromedriver --version
 
       - name: 🚀 Start Python HTTP Server
@@ -40,6 +56,11 @@ jobs:
         run: |
           cd tests
           npm install
+
+      - name: 🛠️ Fix Mocha Permissions
+        run: |
+          cd tests
+          chmod -R +x node_modules/.bin/
 
       - name: 🧪 Run Mocha Tests
         run: |
