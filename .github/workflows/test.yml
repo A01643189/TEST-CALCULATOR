@@ -45,6 +45,9 @@ jobs:
           cd tests
           npm install
 
+      - name: 🛠️ Fix Permissions for Mocha
+        run: chmod +x ./node_modules/.bin/mocha
+
       - name: 🧪 Run Mocha Tests
         run: |
           cd tests
