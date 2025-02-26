@@ -2,7 +2,7 @@
 const { Builder, By, Key, until } = require('selenium-webdriver')
 const assert = require('assert')
 
-describe('40+40 = 80', function() {
+describe('40 + 40 = 80', function() {
   this.timeout(30000)
   let driver
   let vars
@@ -13,11 +13,12 @@ describe('40+40 = 80', function() {
   afterEach(async function() {
     await driver.quit();
   })
-  it('40+40 = 80', async function() {
+  it('40 + 40 = 80', async function() {
     await driver.get("http://localhost:8000/")
-    await driver.manage().window().setRect({ width: 1334, height: 1032 })
+    await driver.manage().window().setRect({ width: 945, height: 1012 })
     await driver.findElement(By.id("num1")).click()
     await driver.findElement(By.id("num1")).sendKeys("40")
+    await driver.findElement(By.css(".input-group:nth-child(4)")).click()
     await driver.findElement(By.id("num2")).click()
     await driver.findElement(By.id("num2")).sendKeys("40")
     await driver.findElement(By.css("button:nth-child(1)")).click()

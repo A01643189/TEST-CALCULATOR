@@ -1,74 +1,58 @@
 name: Run tests
 
- 
-
 on:
-
   workflow_dispatch:
   pull_request:
 
-  
-
 jobs:
-
   test:
-
     name: Test
-
     runs-on: ubuntu-22.04
 
- 
-
     container:
-
       image: node:20
 
- 
-
     steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
         with:
-
           node-version: '20'
 
-      - uses: browser-actions/setup-chrome@v1
-
+      - name: 🌐 Setup Google Chrome
+        uses: browser-actions/setup-chrome@v1
         with:
-
           chrome-version: 120
-
           install-dependencies: true
 
-      - run: |
+      - name: 🚀 Start Python HTTP Server
+        run: |
+          cd src
+          nohup python3 -m http.server 8000 > http_server.log 2>&1 &
 
-            cd src
+      - name: ⏳ Wait for Server to be Ready
+        run: |
+          until curl --output /dev/null --silent --head --fail http://localhost:8000; do
+            echo "Waiting for server to start..."
+            sleep 1
+          done
+          echo "Server is up!"
 
-            python3 -m http.server 8000 &
+      - name: 📦 Install Dependencies
+        run: |
+          cd tests
+          npm install
 
-            sleep 10 &&
+      - name: 🧪 Run Mocha Tests
+        run: |
+          cd tests
+          npm test
 
-            curl http://localhost:8000
-
-            cd ..
-
-            cd tests
-
-            npm install
-
-            ./node_modules/.bin/mocha *.js
-
-       
-
-      - uses: actions/upload-artifact@v4
-
-        if: always()
-
+      - name: 📤 Upload Screenshots on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
-
           name: screenshots
-
           path: screenshots/
