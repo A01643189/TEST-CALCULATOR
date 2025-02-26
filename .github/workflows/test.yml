@@ -24,8 +24,17 @@ jobs:
       - name: 🌐 Setup Google Chrome
         uses: browser-actions/setup-chrome@v1
         with:
-          chrome-version: 120
+          chrome-version: latest
           install-dependencies: true
+
+      - name: 🛠️ Install Chrome WebDriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
+          echo "Detected Chrome version: $CHROME_VERSION"
+          wget -q "https://storage.googleapis.com/chrome-for-testing-public/$CHROME_VERSION/linux64/chromedriver-linux64.zip"
+          unzip chromedriver-linux64.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
 
       - name: 🚀 Start Python HTTP Server
         run: |
@@ -44,11 +53,6 @@ jobs:
         run: |
           cd tests
           npm install
-
-      - name: 🛠️ Fix mocha permissions
-        run: |
-          cd tests
-          chmod -R +x node_modules/.bin/
 
       - name: 🧪 Run Mocha Tests
         run: |
