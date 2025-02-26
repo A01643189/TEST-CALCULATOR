@@ -40,12 +40,15 @@ jobs:
           done
           echo "Server is up!"
 
-      - name: 📦 Install Dependencies (Ensure Mocha is Installed)
+      - name: 📦 Install Dependencies
         run: |
           cd tests
           npm install
-          npm install --save-dev mocha
-          ls -la node_modules/.bin/ # Debugging step
+
+      - name: 🛠️ Fix mocha permissions
+        run: |
+          cd tests
+          chmod -R +x node_modules/.bin/
 
       - name: 🧪 Run Mocha Tests
         run: |
