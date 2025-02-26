@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "mocha": "^11.1.0",
+    "selenium-webdriver": "^4.28.1"
+  },
+  "name": "tests",
+  "version": "1.0.0",
+  "description": "Test for calculator",
+  "main": "",
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha *.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/A01643189/TEST-CALCULATOR.git"
+  },
+  "keywords": [
+    "CALCULATOR"
+  ],
+  "author": "Javier Romo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/A01643189/TEST-CALCULATOR/issues"
+  },
+  "homepage": "https://github.com/A01643189/TEST-CALCULATOR#readme"
+}
