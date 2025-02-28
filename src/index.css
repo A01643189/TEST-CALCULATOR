@@ -61,13 +61,13 @@ body {
     font-size: 16px;
     border: none;
     border-radius: 5px;
-    background-color: #4caf50;
+    background-color: #137cd3;
     color: white;
     cursor: pointer;
   }
   
   button:hover {
-    background-color: #45a049;
+    background-color: #27d4eb;
   }
 
   button:nth-child(2) {
