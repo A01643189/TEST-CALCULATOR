@@ -9,8 +9,7 @@
   "main": "",
   "devDependencies": {},
   "scripts": {
-    "test": "mocha tests/*.spec.js"
-
+    "test": "mocha *.spec.js"
   },
   "repository": {
     "type": "git",
