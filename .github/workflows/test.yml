@@ -1,75 +1,73 @@
 name: Run tests
 
+ 
+
 on:
+
   workflow_dispatch:
-  pull_request:
+
+  
 
 jobs:
+
   test:
+
     name: Test
+
     runs-on: ubuntu-22.04
 
+ 
+
     container:
-      image: node:20  # ✅ Using node:20 container
+
+      image: node:20
+
+ 
 
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+
         with:
+
           node-version: '20'
 
-      - name: 🌐 Install Google Chrome (No sudo)
-        run: |
-          apt-get update
-          apt-get install -y wget curl unzip
-          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          dpkg -i google-chrome-stable_current_amd64.deb || apt-get -fy install
-          google-chrome --version
+      - uses: browser-actions/setup-chrome@v1
 
-      - name: 🛠️ Install Chrome WebDriver (No sudo)
-        run: |
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
-          echo "Detected Chrome version: $CHROME_VERSION"
-          wget -q "https://storage.googleapis.com/chrome-for-testing-public/$CHROME_VERSION/linux64/chromedriver-linux64.zip"
-          unzip chromedriver-linux64.zip
-          mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-          chmod +x /usr/local/bin/chromedriver
-          chromedriver --version
-
-      - name: 🚀 Start Python HTTP Server
-        run: |
-          cd src
-          nohup python3 -m http.server 8000 > http_server.log 2>&1 &
-
-      - name: ⏳ Wait for Server to be Ready
-        run: |
-          until curl --output /dev/null --silent --head --fail http://localhost:8000; do
-            echo "Waiting for server to start..."
-            sleep 1
-          done
-          echo "Server is up!"
-
-      - name: 📦 Install Dependencies
-        run: |
-          cd tests
-          npm install
-
-      - name: 🛠️ Fix Mocha Permissions
-        run: |
-          cd tests
-          chmod -R +x node_modules/.bin/
-
-      - name: 🧪 Run Mocha Tests
-        run: |
-          cd tests
-          npx mocha "*.spec.js"
-
-      - name: 📤 Upload Screenshots on Failure
-        if: failure()
-        uses: actions/upload-artifact@v4
         with:
+
+          chrome-version: 120
+
+          install-dependencies: true
+
+      - run: |
+
+            cd src
+
+            python3 -m http.server 8000 &
+
+            sleep 10 &&
+
+            curl http://localhost:8000
+
+            cd ..
+
+            cd tests
+
+            npm install
+
+            ./node_modules/.bin/mocha *.js
+
+       
+
+      - uses: actions/upload-artifact@v4
+
+        if: always()
+
+        with:
+
           name: screenshots
+
           path: screenshots/
